@@ -11,6 +11,12 @@ final class AccessTokenRequest
     private $userId;
 
     /**
+     * A name of the level configured in the dashboard.
+     * @var string
+     */
+    private $levelName;
+
+    /**
      * Lifespan of a token in seconds. Default value is equal to 10 mins.
      * @var int|null
      */
@@ -19,11 +25,13 @@ final class AccessTokenRequest
     /**
      * AccessTokenRequest constructor.
      * @param string $userId
+     * @param string $levelName
      * @param int|null $ttlInSecs
      */
-    public function __construct($userId, $ttlInSecs = null)
+    public function __construct($userId, $levelName, $ttlInSecs = null)
     {
         $this->userId = $userId;
+        $this->levelName = $levelName;
         $this->ttlInSecs = $ttlInSecs;
     }
 
@@ -33,6 +41,14 @@ final class AccessTokenRequest
     public function getUserId()
     {
         return $this->userId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLevelName()
+    {
+        return $this->levelName;
     }
 
     /**
