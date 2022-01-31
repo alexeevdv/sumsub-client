@@ -39,8 +39,9 @@ $client = new Client(
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 
 $externalUserId = 'some-id';
+$levelName = 'some-level';
 $ttlInSeconds = 3600;
-$response = $client->getAccessToken(new AccessTokenRequest($externalUserId, $ttlInSeconds));
+$response = $client->getAccessToken(new AccessTokenRequest($externalUserId, $levelName, $ttlInSeconds));
 $accessToken = $response->getToken();
 ```
 

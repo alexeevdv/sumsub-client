@@ -28,30 +28,7 @@ final class ClientTest extends Unit
                 self::assertSame('https', $request->getUri()->getScheme());
                 self::assertSame('api.sumsub.com', $request->getUri()->getHost());
                 self::assertSame('/resources/accessTokens', $request->getUri()->getPath());
-                self::assertSame('userId=123456', $request->getUri()->getQuery());
-
-                return new Response(200, [], json_encode([
-                    'token' => '654321',
-                    'userId' => '123456',
-                ]));
-            }),
-        ]);
-
-        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
-
-        $accessTokenResponse = $client->getAccessToken(new AccessTokenRequest('123456'));
-
-        self::assertSame('654321', $accessTokenResponse->getToken());
-        self::assertSame('123456', $accessTokenResponse->getUserId());
-    }
-
-    public function testGetAccessTokenWithTtlInSeconds(): void
-    {
-        /** @var ClientInterface $httpClient */
-        $httpClient = $this->makeEmpty(ClientInterface::class, [
-            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
-                self::assertSame('/resources/accessTokens', $request->getUri()->getPath());
-                self::assertSame('userId=123456&ttlInSecs=3600', $request->getUri()->getQuery());
+                self::assertSame('userId=123456&levelName=test-level', $request->getUri()->getQuery());
 
                 return new Response(200, [], json_encode([
                     'token' => '654321',
@@ -63,7 +40,32 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $accessTokenResponse = $client->getAccessToken(
-            new AccessTokenRequest('123456', 3600)
+            new AccessTokenRequest('123456', 'test-level')
+        );
+
+        self::assertSame('654321', $accessTokenResponse->getToken());
+        self::assertSame('123456', $accessTokenResponse->getUserId());
+    }
+
+    public function testGetAccessTokenWithTtlInSeconds(): void
+    {
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/accessTokens', $request->getUri()->getPath());
+                self::assertSame('userId=123456&levelName=test-level&ttlInSecs=3600', $request->getUri()->getQuery());
+
+                return new Response(200, [], json_encode([
+                    'token' => '654321',
+                    'userId' => '123456',
+                ]));
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        $accessTokenResponse = $client->getAccessToken(
+            new AccessTokenRequest('123456', 'test-level', 3600)
         );
 
         self::assertSame('654321', $accessTokenResponse->getToken());
@@ -83,7 +85,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $this->expectException(TransportException::class);
-        $client->getAccessToken(new AccessTokenRequest('123456'));
+        $client->getAccessToken(new AccessTokenRequest('123456', 'test-level'));
     }
 
     public function testGetAccessTokenWhenResponseCodeIsNot200(): void
@@ -98,7 +100,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $this->expectException(BadResponseException::class);
-        $client->getAccessToken(new AccessTokenRequest('123456'));
+        $client->getAccessToken(new AccessTokenRequest('123456', 'test-level'));
     }
 
     public function testGetApplicantDataByApplicantId(): void

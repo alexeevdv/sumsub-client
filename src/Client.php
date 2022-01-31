@@ -64,10 +64,16 @@ final class Client implements ClientInterface
      */
     public function getAccessToken(AccessTokenRequest $request): AccessTokenResponse
     {
-        $url = $this->baseUrl . '/resources/accessTokens?userId=' . $request->getUserId();
+        $queryParams = [
+            'userId' => $request->getUserId(),
+            'levelName' => $request->getLevelName(),
+        ];
+
         if ($request->getTtlInSecs() !== null) {
-            $url .= '&ttlInSecs=' . $request->getTtlInSecs();
+            $queryParams['ttlInSecs'] = $request->getTtlInSecs();
         }
+
+        $url = sprintf('%s/resources/accessTokens?%s', $this->baseUrl, http_build_query($queryParams));
 
         $httpRequest = $this->createApiRequest('POST', $url);
         $httpResponse = $this->sendApiRequest($httpRequest);
