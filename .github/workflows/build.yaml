@@ -1,0 +1,20 @@
+name: Build
+
+on: [pull_request]
+
+jobs:
+  build-7-1:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup PHP with composer v2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.1'
+          tools: composer:v2
+      - name: Install dependencies
+        run: composer install --prefer-dist
+      - name: Check code style
+        run: php vendor/bin/phpcs --standard=PSR12 --extensions=php src
+      - name: Run unit tests
+        run: php vendor/bin/codecept run --coverage --coverage-xml
