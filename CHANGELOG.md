@@ -1,5 +1,8 @@
 Under development
 -----------------
+
+0.2.0 (2022-01-31)
+-----------------
 - Feature: Use GitHub actions instead of deprecated TravisCI (alexeevdv)
 - Feature: changed access token generation according to [migration](https://developers.sumsub.com/migrations/sdk.html#websdk-migration-steps) (egor.kovyazin)
 
