@@ -39,7 +39,9 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
-        $accessTokenResponse = $client->getAccessToken(new AccessTokenRequest('123456'));
+        $accessTokenResponse = $client->getAccessToken(
+            new AccessTokenRequest('123456', 'test-level')
+        );
 
         self::assertSame('654321', $accessTokenResponse->getToken());
         self::assertSame('123456', $accessTokenResponse->getUserId());
@@ -63,7 +65,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $accessTokenResponse = $client->getAccessToken(
-            new AccessTokenRequest('123456', 3600)
+            new AccessTokenRequest('123456', 'test-level', 3600)
         );
 
         self::assertSame('654321', $accessTokenResponse->getToken());
@@ -83,7 +85,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $this->expectException(TransportException::class);
-        $client->getAccessToken(new AccessTokenRequest('123456'));
+        $client->getAccessToken(new AccessTokenRequest('123456', 'test-level'));
     }
 
     public function testGetAccessTokenWhenResponseCodeIsNot200(): void
@@ -98,7 +100,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $this->expectException(BadResponseException::class);
-        $client->getAccessToken(new AccessTokenRequest('123456'));
+        $client->getAccessToken(new AccessTokenRequest('123456', 'test-level'));
     }
 
     public function testGetApplicantDataByApplicantId(): void
