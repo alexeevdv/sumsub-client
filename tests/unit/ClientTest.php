@@ -28,7 +28,7 @@ final class ClientTest extends Unit
                 self::assertSame('https', $request->getUri()->getScheme());
                 self::assertSame('api.sumsub.com', $request->getUri()->getHost());
                 self::assertSame('/resources/accessTokens', $request->getUri()->getPath());
-                self::assertSame('userId=123456', $request->getUri()->getQuery());
+                self::assertSame('userId=123456&levelName=test-level', $request->getUri()->getQuery());
 
                 return new Response(200, [], json_encode([
                     'token' => '654321',
@@ -53,7 +53,7 @@ final class ClientTest extends Unit
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
                 self::assertSame('/resources/accessTokens', $request->getUri()->getPath());
-                self::assertSame('userId=123456&ttlInSecs=3600', $request->getUri()->getQuery());
+                self::assertSame('userId=123456&levelName=test-level&ttlInSecs=3600', $request->getUri()->getQuery());
 
                 return new Response(200, [], json_encode([
                     'token' => '654321',
