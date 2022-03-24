@@ -7,8 +7,10 @@ use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
+use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
+use alexeevdv\SumSub\Response\ResetApplicantResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -107,6 +109,20 @@ final class Client implements ClientInterface
         }
 
         return new ApplicantDataResponse($this->decodeResponse($httpResponse));
+    }
+
+    public function resetApplicant(ResetApplicantRequest $request): ResetApplicantResponse
+    {
+        $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/reset';
+
+        $httpRequest = $this->createApiRequest('POST', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new ResetApplicantResponse($this->decodeResponse($httpResponse));
     }
 
     private function createApiRequest($method, $uri): RequestInterface

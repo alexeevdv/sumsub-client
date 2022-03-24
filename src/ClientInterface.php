@@ -5,8 +5,10 @@ namespace alexeevdv\SumSub;
 use alexeevdv\SumSub\Exception\Exception;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
+use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
+use alexeevdv\SumSub\Response\ResetApplicantResponse;
 
 interface ClientInterface
 {
@@ -23,4 +25,11 @@ interface ClientInterface
      * @throws Exception
      */
     public function getApplicantData(ApplicantDataRequest $request): ApplicantDataResponse;
+
+    /**
+     * Resetting an applicant
+     * @see https://developers.sumsub.com/api-reference/#resetting-an-applicant
+     * @throws Exception
+     */
+    public function resetApplicant(ResetApplicantRequest $request): ResetApplicantResponse;
 }

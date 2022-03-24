@@ -8,6 +8,7 @@ use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
+use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use Codeception\Stub\Expected;
 use Codeception\Test\Unit;
 use GuzzleHttp\Psr7\Request;
@@ -170,6 +171,57 @@ final class ClientTest extends Unit
 
         $this->expectException(BadResponseException::class);
          $client->getApplicantData(new ApplicantDataRequest('123456'));
+    }
+
+    public function testResetApplicant(): void
+    {
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/applicants/123456/reset', $request->getUri()->getPath());
+                self::assertSame('', $request->getUri()->getQuery());
+
+                return new Response(200, [], json_encode(['a' => 'b']));
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        $applicantDataResponse = $client->resetApplicant(new ResetApplicantRequest('123456'));
+        self::assertSame(['a' => 'b'], $applicantDataResponse->asArray());
+    }
+
+    public function testResetApplicantWhenResponseCodeIsNot200(): void
+    {
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/applicants/123456/reset', $request->getUri()->getPath());
+                self::assertSame('', $request->getUri()->getQuery());
+
+                return new Response(500, [], 'Something went wrong');
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        $this->expectException(BadResponseException::class);
+        $client->resetApplicant(new ResetApplicantRequest('123456'));
+    }
+
+    public function testResetApplicantWhenCanNotDecodeResponse(): void
+    {
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                return new Response(200, [], 'Not a JSON string');
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        $this->expectException(BadResponseException::class);
+        $client->resetApplicant(new ResetApplicantRequest('123456'));
     }
 
     private function getRequestSigner(): RequestSignerInterface
