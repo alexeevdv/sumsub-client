@@ -1,0 +1,6 @@
+version: '3'
+services:
+  php71:
+    image: php:7.1-fpm-alpine
+    volumes:
+      - ./:/var/www/html

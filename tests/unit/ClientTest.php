@@ -181,14 +181,13 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/applicants/123456/reset', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, [], json_encode(['a' => 'b']));
+                return new Response(200, [], json_encode(['ok' => 1]));
             }),
         ]);
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
-        $applicantDataResponse = $client->resetApplicant(new ResetApplicantRequest('123456'));
-        self::assertSame(['a' => 'b'], $applicantDataResponse->asArray());
+        $client->resetApplicant(new ResetApplicantRequest('123456'));
     }
 
     public function testResetApplicantWhenResponseCodeIsNot200(): void

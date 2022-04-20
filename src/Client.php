@@ -111,7 +111,7 @@ final class Client implements ClientInterface
         return new ApplicantDataResponse($this->decodeResponse($httpResponse));
     }
 
-    public function resetApplicant(ResetApplicantRequest $request): ResetApplicantResponse
+    public function resetApplicant(ResetApplicantRequest $request): void
     {
         $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/reset';
 
@@ -122,7 +122,12 @@ final class Client implements ClientInterface
             throw new BadResponseException($httpResponse);
         }
 
-        return new ResetApplicantResponse($this->decodeResponse($httpResponse));
+        $decodedResponse = $this->decodeResponse($httpResponse);
+        $isOk = ($decodedResponse['ok'] ?? 0) === 1;
+
+        if (!$isOk) {
+            throw new BadResponseException($httpResponse);
+        }
     }
 
     private function createApiRequest($method, $uri): RequestInterface

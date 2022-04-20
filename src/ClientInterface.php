@@ -31,5 +31,5 @@ interface ClientInterface
      * @see https://developers.sumsub.com/api-reference/#resetting-an-applicant
      * @throws Exception
      */
-    public function resetApplicant(ResetApplicantRequest $request): ResetApplicantResponse;
+    public function resetApplicant(ResetApplicantRequest $request): void;
 }

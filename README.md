@@ -71,6 +71,5 @@ $applicantData = $response->asArray();
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 
 $applicantId = 'some-id';
-$response = $client->resetApplicant(new ResetApplicantRequest($applicantId));
-$resetStatus = $response->asArray();
+$client->resetApplicant(new ResetApplicantRequest($applicantId));
 ```
