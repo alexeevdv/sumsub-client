@@ -1,5 +1,8 @@
 Under development
 -----------------
+
+0.3.0 (2022-04-20)
+-----------------
 - Feature: resetApplicant() method support (sspat)
 
 0.2.0 (2022-01-31)
