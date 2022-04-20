@@ -173,7 +173,7 @@ final class ClientTest extends Unit
          $client->getApplicantData(new ApplicantDataRequest('123456'));
     }
 
-    public function testResetApplicant(): void
+    public function testResetApplicantIsOk(): void
     {
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
@@ -187,6 +187,24 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        $client->resetApplicant(new ResetApplicantRequest('123456'));
+    }
+
+    public function testResetApplicantIsNotOk(): void
+    {
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/applicants/123456/reset', $request->getUri()->getPath());
+                self::assertSame('', $request->getUri()->getQuery());
+
+                return new Response(200, [], json_encode(['ok' => 0]));
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        $this->expectException(BadResponseException::class);
         $client->resetApplicant(new ResetApplicantRequest('123456'));
     }
 
