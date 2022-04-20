@@ -64,3 +64,13 @@ $externalUserId = 'some-id';
 $response = $client->getApplicantData(new ApplicantDataRequest(null, $externalUserId));
 $applicantData = $response->asArray();
 ```
+
+## Resetting an applicant
+
+```php
+use alexeevdv\SumSub\Request\ResetApplicantRequest;
+
+$applicantId = 'some-id';
+$response = $client->resetApplicant(new ResetApplicantRequest($applicantId));
+$resetStatus = $response->asArray();
+```
