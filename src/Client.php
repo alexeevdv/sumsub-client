@@ -6,10 +6,14 @@ use alexeevdv\SumSub\Exception\BadResponseException;
 use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
+use alexeevdv\SumSub\Request\ApplicantStatusRequest;
+use alexeevdv\SumSub\Request\DocumentImagesRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
+use alexeevdv\SumSub\Response\ApplicantStatusResponse;
+use alexeevdv\SumSub\Response\DocumentImagesResponse;
 use alexeevdv\SumSub\Response\ResetApplicantResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
@@ -111,6 +115,10 @@ final class Client implements ClientInterface
         return new ApplicantDataResponse($this->decodeResponse($httpResponse));
     }
 
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
     public function resetApplicant(ResetApplicantRequest $request): void
     {
         $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/reset';
@@ -128,6 +136,43 @@ final class Client implements ClientInterface
         if (!$isOk) {
             throw new BadResponseException($httpResponse);
         }
+    }
+
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getApplicantStatus(ApplicantStatusRequest $request): ApplicantStatusResponse
+    {
+        $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/requiredIdDocsStatus';
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new ApplicantStatusResponse($this->decodeResponse($httpResponse));
+    }
+
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getDocumentImages(DocumentImagesRequest $request): DocumentImagesResponse
+    {
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() .
+            '/resources/' . $request->getImageId();
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new DocumentImagesResponse($httpResponse);
     }
 
     private function createApiRequest($method, $uri): RequestInterface
