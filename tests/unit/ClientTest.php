@@ -292,7 +292,7 @@ final class ClientTest extends Unit
 
         $applicantStatusResponse = $client->getDocumentImages(new DocumentImagesRequest('123456', '654321'));
 
-        self::assertSame('contents', $applicantStatusResponse->asString());
+        self::assertSame('contents', (string) $applicantStatusResponse->asStream());
         self::assertSame('text/plain', $applicantStatusResponse->getContentType());
     }
 

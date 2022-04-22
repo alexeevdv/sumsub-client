@@ -17,11 +17,6 @@ final class DocumentImagesResponse
         $this->response = $response;
     }
 
-    public function asString(): string
-    {
-        return $this->response->getBody()->getContents();
-    }
-
     public function asStream(): StreamInterface
     {
         return $this->response->getBody();
