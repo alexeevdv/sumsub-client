@@ -94,7 +94,6 @@ use alexeevdv\SumSub\Request\DocumentImagesRequest;
 $inspectionId = 'some-id';
 $imageId = '123';
 $response = $client->getDocumentImages(new DocumentImagesRequest($inspectionId, $imageId));
-$image = $response->asString();
 $stream = $response->asStream();
 $conentType = $response->getContentType();
 ```
