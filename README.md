@@ -97,3 +97,13 @@ $response = $client->getDocumentImages(new DocumentImagesRequest($inspectionId, 
 $stream = $response->asStream();
 $conentType = $response->getContentType();
 ```
+
+## Getting inspection checks
+
+```php
+use alexeevdv\SumSub\Request\InspectionChecksRequest;
+
+$inspectionId = 'some-id';
+$response = $client->getInspectionChecks(new InspectionChecksRequest($inspectionId));
+$checksData = $response->asArray();
+```
