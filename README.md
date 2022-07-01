@@ -1,8 +1,6 @@
 sumsub-client
 ===============
 
-[![Build Status](https://travis-ci.org/alexeevdv/sumsub-client.svg?branch=develop)](https://travis-ci.org/alexeevdv/sumsub-client) 
-[![codecov](https://codecov.io/gh/alexeevdv/sumsub-client/branch/develop/graph/badge.svg)](https://codecov.io/gh/alexeevdv/sumsub-client)
 ![PHP 7.1](https://img.shields.io/badge/PHP-7.1-green.svg) 
 ![PHP 7.2](https://img.shields.io/badge/PHP-7.2-green.svg)
 ![PHP 7.3](https://img.shields.io/badge/PHP-7.3-green.svg)
@@ -74,4 +72,36 @@ use alexeevdv\SumSub\Request\ResetApplicantRequest;
 
 $applicantId = 'some-id';
 $client->resetApplicant(new ResetApplicantRequest($applicantId));
+```
+
+## Getting applicant status
+
+```php
+use alexeevdv\SumSub\Request\ApplicantStatusRequest;
+
+$applicantId = 'some-id';
+$response = $client->getApplicantStatus(new ApplicantStatusRequest($applicantId));
+$applicantStatus = $response->asArray();
+```
+
+## Getting document images
+
+```php
+use alexeevdv\SumSub\Request\DocumentImageRequest;
+
+$inspectionId = 'some-id';
+$imageId = '123';
+$response = $client->getDocumentImages(new DocumentImageRequest($inspectionId, $imageId));
+$stream = $response->asStream();
+$conentType = $response->getContentType();
+```
+
+## Getting inspection checks
+
+```php
+use alexeevdv\SumSub\Request\InspectionChecksRequest;
+
+$inspectionId = 'some-id';
+$response = $client->getInspectionChecks(new InspectionChecksRequest($inspectionId));
+$checksData = $response->asArray();
 ```

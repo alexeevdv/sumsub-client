@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub\Request;
 
 final class ApplicantDataRequest
@@ -14,11 +16,7 @@ final class ApplicantDataRequest
      */
     private $externalUserId;
 
-    /**
-     * @param string|null $applicantId
-     * @param string|null $externalUserId
-     */
-    public function __construct($applicantId, $externalUserId = null)
+    public function __construct(?string $applicantId, ?string $externalUserId = null)
     {
         if ($applicantId === null && $externalUserId === null) {
             throw new \InvalidArgumentException('Applicant ID and External user ID can not be both null.');
@@ -27,18 +25,12 @@ final class ApplicantDataRequest
         $this->externalUserId = $externalUserId;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getApplicantId()
+    public function getApplicantId(): ?string
     {
         return $this->applicantId;
     }
 
-    /**
-     * @return string|null
-     */
-    public function getExternalUserId()
+    public function getExternalUserId(): ?string
     {
         return $this->externalUserId;
     }

@@ -1,16 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub;
 
 use alexeevdv\SumSub\Exception\BadResponseException;
 use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
+use alexeevdv\SumSub\Request\ApplicantStatusRequest;
+use alexeevdv\SumSub\Request\DocumentImageRequest;
+use alexeevdv\SumSub\Request\InspectionChecksRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
-use alexeevdv\SumSub\Response\ResetApplicantResponse;
+use alexeevdv\SumSub\Response\ApplicantStatusResponse;
+use alexeevdv\SumSub\Response\DocumentImageResponse;
+use alexeevdv\SumSub\Response\InspectionChecksResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -20,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 final class Client implements ClientInterface
 {
     public const PRODUCTION_BASE_URI = 'https://api.sumsub.com';
+
     public const STAGING_BASE_URI = 'https://test-api.sumsub.com';
 
     /**
@@ -42,17 +50,11 @@ final class Client implements ClientInterface
      */
     private $baseUrl;
 
-    /**
-     * @param HttpClientInterface $httpClient
-     * @param RequestFactoryInterface $requestFactory
-     * @param RequestSignerInterface $requestSigner
-     * @param string $baseUrl
-     */
     public function __construct(
-        $httpClient,
-        $requestFactory,
-        $requestSigner,
-        $baseUrl = self::PRODUCTION_BASE_URI
+        HttpClientInterface $httpClient,
+        RequestFactoryInterface $requestFactory,
+        RequestSignerInterface $requestSigner,
+        string $baseUrl = self::PRODUCTION_BASE_URI
     ) {
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
@@ -111,6 +113,10 @@ final class Client implements ClientInterface
         return new ApplicantDataResponse($this->decodeResponse($httpResponse));
     }
 
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
     public function resetApplicant(ResetApplicantRequest $request): void
     {
         $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/reset';
@@ -125,20 +131,67 @@ final class Client implements ClientInterface
         $decodedResponse = $this->decodeResponse($httpResponse);
         $isOk = ($decodedResponse['ok'] ?? 0) === 1;
 
-        if (!$isOk) {
+        if (! $isOk) {
             throw new BadResponseException($httpResponse);
         }
     }
 
-    private function createApiRequest($method, $uri): RequestInterface
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getApplicantStatus(ApplicantStatusRequest $request): ApplicantStatusResponse
+    {
+        $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/requiredIdDocsStatus';
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new ApplicantStatusResponse($this->decodeResponse($httpResponse));
+    }
+
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getDocumentImage(DocumentImageRequest $request): DocumentImageResponse
+    {
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() . '/resources/' . $request->getImageId();
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new DocumentImageResponse($httpResponse);
+    }
+
+    public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse
+    {
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() . '/checks';
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new InspectionChecksResponse($this->decodeResponse($httpResponse));
+    }
+
+    private function createApiRequest(string $method, string $uri): RequestInterface
     {
         $httpRequest = $this->requestFactory
             ->createRequest($method, $uri)
-            ->withHeader('Accept', 'application/json')
-        ;
-        $httpRequest = $this->requestSigner->sign($httpRequest);
-
-        return $httpRequest;
+            ->withHeader('Accept', 'application/json');
+        return $this->requestSigner->sign($httpRequest);
     }
 
     /**
