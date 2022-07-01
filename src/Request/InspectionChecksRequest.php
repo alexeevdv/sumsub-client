@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub\Request;
 
 final class InspectionChecksRequest
@@ -9,7 +11,6 @@ final class InspectionChecksRequest
      */
     private $inspectionId;
 
-
     /**
      * @param $inspectionId
      */
@@ -18,9 +19,6 @@ final class InspectionChecksRequest
         $this->inspectionId = $inspectionId;
     }
 
-    /**
-     * @return string
-     */
     public function getInspectionId(): string
     {
         return $this->inspectionId;

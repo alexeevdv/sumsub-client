@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub\Exception;
 
 use Psr\Http\Message\ResponseInterface;
@@ -20,8 +22,8 @@ final class BadResponseException extends \Exception implements Exception
 
         $message = (string) json_encode(
             [
-            'statusCode' => $response->getStatusCode(),
-            'body' => mb_substr($response->getBody()->getContents(), 0, self::MAX_BODY_LENGTH),
+                'statusCode' => $response->getStatusCode(),
+                'body' => mb_substr($response->getBody()->getContents(), 0, self::MAX_BODY_LENGTH),
             ]
         );
 

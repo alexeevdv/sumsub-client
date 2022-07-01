@@ -1,8 +1,5 @@
 Under development
 -----------------
-
-0.4.0 (2022-04-21)
------------------
 - Feature: getApplicantStatus() method support (sspat)
 - Feature: getDocumentImages() method support (sspat)
 - Feature: getInspectionChecks() method support (goffyara)

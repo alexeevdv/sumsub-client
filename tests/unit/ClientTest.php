@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace tests\unit;
 
 use alexeevdv\SumSub\Client;
@@ -80,7 +82,7 @@ final class ClientTest extends Unit
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
-                throw new class () extends \Exception implements ClientExceptionInterface {
+                throw new class() extends \Exception implements ClientExceptionInterface {
                 };
             }),
         ]);
@@ -114,14 +116,18 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/applicants/123456/one', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, [], json_encode(['a' => 'b']));
+                return new Response(200, [], json_encode([
+                    'a' => 'b',
+                ]));
             }),
         ]);
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $applicantDataResponse = $client->getApplicantData(new ApplicantDataRequest('123456'));
-        self::assertSame(['a' => 'b'], $applicantDataResponse->asArray());
+        self::assertSame([
+            'a' => 'b',
+        ], $applicantDataResponse->asArray());
     }
 
     public function testGetApplicantDataByExternalUserId(): void
@@ -132,14 +138,18 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/applicants/-;externalUserId=654321/one', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, [], json_encode(['a' => 'b']));
+                return new Response(200, [], json_encode([
+                    'a' => 'b',
+                ]));
             }),
         ]);
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $applicantDataResponse = $client->getApplicantData(new ApplicantDataRequest(null, '654321'));
-        self::assertSame(['a' => 'b'], $applicantDataResponse->asArray());
+        self::assertSame([
+            'a' => 'b',
+        ], $applicantDataResponse->asArray());
     }
 
     public function testGetApplicantDataWhenResponseCodeIsNot200(): void
@@ -172,7 +182,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $this->expectException(BadResponseException::class);
-         $client->getApplicantData(new ApplicantDataRequest('123456'));
+        $client->getApplicantData(new ApplicantDataRequest('123456'));
     }
 
     public function testResetApplicantIsOk(): void
@@ -183,7 +193,9 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/applicants/123456/reset', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, [], json_encode(['ok' => 1]));
+                return new Response(200, [], json_encode([
+                    'ok' => 1,
+                ]));
             }),
         ]);
 
@@ -200,7 +212,9 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/applicants/123456/reset', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, [], json_encode(['ok' => 0]));
+                return new Response(200, [], json_encode([
+                    'ok' => 0,
+                ]));
             }),
         ]);
 
@@ -251,14 +265,18 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/applicants/123456/requiredIdDocsStatus', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, [], json_encode(['a' => 'b']));
+                return new Response(200, [], json_encode([
+                    'a' => 'b',
+                ]));
             }),
         ]);
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         $applicantStatusResponse = $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
-        self::assertSame(['a' => 'b'], $applicantStatusResponse->asArray());
+        self::assertSame([
+            'a' => 'b',
+        ], $applicantStatusResponse->asArray());
     }
 
     public function testGetApplicantStatusWhenResponseCodeIsNot200(): void
@@ -302,7 +320,9 @@ final class ClientTest extends Unit
                 self::assertSame('/resources/inspections/123456/resources/654321', $request->getUri()->getPath());
                 self::assertSame('', $request->getUri()->getQuery());
 
-                return new Response(200, ['Content-Type' => 'text/plain'], 'contents');
+                return new Response(200, [
+                    'Content-Type' => 'text/plain',
+                ], 'contents');
             }),
         ]);
 

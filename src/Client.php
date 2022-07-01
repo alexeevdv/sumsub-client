@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub;
 
 use alexeevdv\SumSub\Exception\BadResponseException;
@@ -16,7 +18,6 @@ use alexeevdv\SumSub\Response\ApplicantDataResponse;
 use alexeevdv\SumSub\Response\ApplicantStatusResponse;
 use alexeevdv\SumSub\Response\DocumentImagesResponse;
 use alexeevdv\SumSub\Response\InspectionChecksResponse;
-use alexeevdv\SumSub\Response\ResetApplicantResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
@@ -26,6 +27,7 @@ use Psr\Http\Message\ResponseInterface;
 final class Client implements ClientInterface
 {
     public const PRODUCTION_BASE_URI = 'https://api.sumsub.com';
+
     public const STAGING_BASE_URI = 'https://test-api.sumsub.com';
 
     /**
@@ -49,10 +51,10 @@ final class Client implements ClientInterface
     private $baseUrl;
 
     /**
-     * @param HttpClientInterface     $httpClient
+     * @param HttpClientInterface $httpClient
      * @param RequestFactoryInterface $requestFactory
-     * @param RequestSignerInterface  $requestSigner
-     * @param string                  $baseUrl
+     * @param RequestSignerInterface $requestSigner
+     * @param string $baseUrl
      */
     public function __construct(
         $httpClient,
@@ -135,7 +137,7 @@ final class Client implements ClientInterface
         $decodedResponse = $this->decodeResponse($httpResponse);
         $isOk = ($decodedResponse['ok'] ?? 0) === 1;
 
-        if (!$isOk) {
+        if (! $isOk) {
             throw new BadResponseException($httpResponse);
         }
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub\Request;
 
 use Psr\Http\Message\RequestInterface;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub;
 
 use alexeevdv\SumSub\Exception\Exception;
