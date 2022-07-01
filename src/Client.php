@@ -6,10 +6,16 @@ use alexeevdv\SumSub\Exception\BadResponseException;
 use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
+use alexeevdv\SumSub\Request\ApplicantStatusRequest;
+use alexeevdv\SumSub\Request\DocumentImagesRequest;
+use alexeevdv\SumSub\Request\InspectionChecksRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
+use alexeevdv\SumSub\Response\ApplicantStatusResponse;
+use alexeevdv\SumSub\Response\DocumentImagesResponse;
+use alexeevdv\SumSub\Response\InspectionChecksResponse;
 use alexeevdv\SumSub\Response\ResetApplicantResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
@@ -43,10 +49,10 @@ final class Client implements ClientInterface
     private $baseUrl;
 
     /**
-     * @param HttpClientInterface $httpClient
+     * @param HttpClientInterface     $httpClient
      * @param RequestFactoryInterface $requestFactory
-     * @param RequestSignerInterface $requestSigner
-     * @param string $baseUrl
+     * @param RequestSignerInterface  $requestSigner
+     * @param string                  $baseUrl
      */
     public function __construct(
         $httpClient,
@@ -111,6 +117,10 @@ final class Client implements ClientInterface
         return new ApplicantDataResponse($this->decodeResponse($httpResponse));
     }
 
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
     public function resetApplicant(ResetApplicantRequest $request): void
     {
         $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/reset';
@@ -130,12 +140,63 @@ final class Client implements ClientInterface
         }
     }
 
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getApplicantStatus(ApplicantStatusRequest $request): ApplicantStatusResponse
+    {
+        $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/requiredIdDocsStatus';
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new ApplicantStatusResponse($this->decodeResponse($httpResponse));
+    }
+
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getDocumentImages(DocumentImagesRequest $request): DocumentImagesResponse
+    {
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() .
+            '/resources/' . $request->getImageId();
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new DocumentImagesResponse($httpResponse);
+    }
+
+    public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse
+    {
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() .
+            '/checks';
+
+        $httpRequest = $this->createApiRequest('GET', $url);
+        $httpResponse = $this->sendApiRequest($httpRequest);
+
+        if ($httpResponse->getStatusCode() !== 200) {
+            throw new BadResponseException($httpResponse);
+        }
+
+        return new InspectionChecksResponse($this->decodeResponse($httpResponse));
+    }
+
     private function createApiRequest($method, $uri): RequestInterface
     {
         $httpRequest = $this->requestFactory
             ->createRequest($method, $uri)
-            ->withHeader('Accept', 'application/json')
-        ;
+            ->withHeader('Accept', 'application/json');
         $httpRequest = $this->requestSigner->sign($httpRequest);
 
         return $httpRequest;

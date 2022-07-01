@@ -6,6 +6,7 @@ final class AccessTokenResponse
 {
     /**
      * A newly generated access token for an applicant.
+     *
      * @var string
      */
     private $token;

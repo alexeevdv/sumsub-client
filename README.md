@@ -75,3 +75,35 @@ use alexeevdv\SumSub\Request\ResetApplicantRequest;
 $applicantId = 'some-id';
 $client->resetApplicant(new ResetApplicantRequest($applicantId));
 ```
+
+## Getting applicant status
+
+```php
+use alexeevdv\SumSub\Request\ApplicantStatusRequest;
+
+$applicantId = 'some-id';
+$response = $client->getApplicantStatus(new ApplicantStatusRequest($applicantId));
+$applicantStatus = $response->asArray();
+```
+
+## Getting document images
+
+```php
+use alexeevdv\SumSub\Request\DocumentImagesRequest;
+
+$inspectionId = 'some-id';
+$imageId = '123';
+$response = $client->getDocumentImages(new DocumentImagesRequest($inspectionId, $imageId));
+$stream = $response->asStream();
+$conentType = $response->getContentType();
+```
+
+## Getting inspection checks
+
+```php
+use alexeevdv\SumSub\Request\InspectionChecksRequest;
+
+$inspectionId = 'some-id';
+$response = $client->getInspectionChecks(new InspectionChecksRequest($inspectionId));
+$checksData = $response->asArray();
+```
