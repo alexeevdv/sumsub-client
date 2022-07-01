@@ -9,14 +9,14 @@ use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
 use alexeevdv\SumSub\Request\ApplicantStatusRequest;
-use alexeevdv\SumSub\Request\DocumentImagesRequest;
+use alexeevdv\SumSub\Request\DocumentImageRequest;
 use alexeevdv\SumSub\Request\InspectionChecksRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
 use alexeevdv\SumSub\Response\ApplicantStatusResponse;
-use alexeevdv\SumSub\Response\DocumentImagesResponse;
+use alexeevdv\SumSub\Response\DocumentImageResponse;
 use alexeevdv\SumSub\Response\InspectionChecksResponse;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
@@ -50,17 +50,11 @@ final class Client implements ClientInterface
      */
     private $baseUrl;
 
-    /**
-     * @param HttpClientInterface $httpClient
-     * @param RequestFactoryInterface $requestFactory
-     * @param RequestSignerInterface $requestSigner
-     * @param string $baseUrl
-     */
     public function __construct(
-        $httpClient,
-        $requestFactory,
-        $requestSigner,
-        $baseUrl = self::PRODUCTION_BASE_URI
+        HttpClientInterface $httpClient,
+        RequestFactoryInterface $requestFactory,
+        RequestSignerInterface $requestSigner,
+        string $baseUrl = self::PRODUCTION_BASE_URI
     ) {
         $this->httpClient = $httpClient;
         $this->requestFactory = $requestFactory;
@@ -164,10 +158,9 @@ final class Client implements ClientInterface
      * @throws BadResponseException
      * @throws TransportException
      */
-    public function getDocumentImages(DocumentImagesRequest $request): DocumentImagesResponse
+    public function getDocumentImage(DocumentImageRequest $request): DocumentImageResponse
     {
-        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() .
-            '/resources/' . $request->getImageId();
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() . '/resources/' . $request->getImageId();
 
         $httpRequest = $this->createApiRequest('GET', $url);
         $httpResponse = $this->sendApiRequest($httpRequest);
@@ -176,13 +169,12 @@ final class Client implements ClientInterface
             throw new BadResponseException($httpResponse);
         }
 
-        return new DocumentImagesResponse($httpResponse);
+        return new DocumentImageResponse($httpResponse);
     }
 
     public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse
     {
-        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() .
-            '/checks';
+        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() . '/checks';
 
         $httpRequest = $this->createApiRequest('GET', $url);
         $httpResponse = $this->sendApiRequest($httpRequest);
@@ -194,14 +186,12 @@ final class Client implements ClientInterface
         return new InspectionChecksResponse($this->decodeResponse($httpResponse));
     }
 
-    private function createApiRequest($method, $uri): RequestInterface
+    private function createApiRequest(string $method, string $uri): RequestInterface
     {
         $httpRequest = $this->requestFactory
             ->createRequest($method, $uri)
             ->withHeader('Accept', 'application/json');
-        $httpRequest = $this->requestSigner->sign($httpRequest);
-
-        return $httpRequest;
+        return $this->requestSigner->sign($httpRequest);
     }
 
     /**

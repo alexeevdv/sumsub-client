@@ -1,8 +1,6 @@
 sumsub-client
 ===============
 
-[![Build Status](https://travis-ci.org/alexeevdv/sumsub-client.svg?branch=develop)](https://travis-ci.org/alexeevdv/sumsub-client) 
-[![codecov](https://codecov.io/gh/alexeevdv/sumsub-client/branch/develop/graph/badge.svg)](https://codecov.io/gh/alexeevdv/sumsub-client)
 ![PHP 7.1](https://img.shields.io/badge/PHP-7.1-green.svg) 
 ![PHP 7.2](https://img.shields.io/badge/PHP-7.2-green.svg)
 ![PHP 7.3](https://img.shields.io/badge/PHP-7.3-green.svg)
@@ -89,11 +87,11 @@ $applicantStatus = $response->asArray();
 ## Getting document images
 
 ```php
-use alexeevdv\SumSub\Request\DocumentImagesRequest;
+use alexeevdv\SumSub\Request\DocumentImageRequest;
 
 $inspectionId = 'some-id';
 $imageId = '123';
-$response = $client->getDocumentImages(new DocumentImagesRequest($inspectionId, $imageId));
+$response = $client->getDocumentImages(new DocumentImageRequest($inspectionId, $imageId));
 $stream = $response->asStream();
 $conentType = $response->getContentType();
 ```

@@ -10,7 +10,7 @@ use alexeevdv\SumSub\Exception\TransportException;
 use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
 use alexeevdv\SumSub\Request\ApplicantStatusRequest;
-use alexeevdv\SumSub\Request\DocumentImagesRequest;
+use alexeevdv\SumSub\Request\DocumentImageRequest;
 use alexeevdv\SumSub\Request\RequestSignerInterface;
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use Codeception\Stub\Expected;
@@ -27,6 +27,7 @@ final class ClientTest extends Unit
 {
     public function testGetAccessTokenWithoutTtlInSeconds(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -44,16 +45,19 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act
         $accessTokenResponse = $client->getAccessToken(
             new AccessTokenRequest('123456', 'test-level')
         );
 
+        // Assert
         self::assertSame('654321', $accessTokenResponse->getToken());
         self::assertSame('123456', $accessTokenResponse->getUserId());
     }
 
     public function testGetAccessTokenWithTtlInSeconds(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -69,16 +73,19 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act
         $accessTokenResponse = $client->getAccessToken(
             new AccessTokenRequest('123456', 'test-level', 3600)
         );
 
+        // Assert
         self::assertSame('654321', $accessTokenResponse->getToken());
         self::assertSame('123456', $accessTokenResponse->getUserId());
     }
 
     public function testGetAccessTokenWhenRequestFailed(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -89,12 +96,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(TransportException::class);
         $client->getAccessToken(new AccessTokenRequest('123456', 'test-level'));
     }
 
     public function testGetAccessTokenWhenResponseCodeIsNot200(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -104,12 +113,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->getAccessToken(new AccessTokenRequest('123456', 'test-level'));
     }
 
     public function testGetApplicantDataByApplicantId(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -124,7 +135,10 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act
         $applicantDataResponse = $client->getApplicantData(new ApplicantDataRequest('123456'));
+
+        // Assert
         self::assertSame([
             'a' => 'b',
         ], $applicantDataResponse->asArray());
@@ -132,6 +146,7 @@ final class ClientTest extends Unit
 
     public function testGetApplicantDataByExternalUserId(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -146,7 +161,10 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act
         $applicantDataResponse = $client->getApplicantData(new ApplicantDataRequest(null, '654321'));
+
+        // Assert
         self::assertSame([
             'a' => 'b',
         ], $applicantDataResponse->asArray());
@@ -154,6 +172,7 @@ final class ClientTest extends Unit
 
     public function testGetApplicantDataWhenResponseCodeIsNot200(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -166,12 +185,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->getApplicantData(new ApplicantDataRequest('123456'));
     }
 
     public function testGetApplicantDataWhenCanNotDecodeResponse(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -181,12 +202,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->getApplicantData(new ApplicantDataRequest('123456'));
     }
 
     public function testResetApplicantIsOk(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -201,11 +224,15 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act
         $client->resetApplicant(new ResetApplicantRequest('123456'));
+
+        // Assert
     }
 
     public function testResetApplicantIsNotOk(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -220,12 +247,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->resetApplicant(new ResetApplicantRequest('123456'));
     }
 
     public function testResetApplicantWhenResponseCodeIsNot200(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -238,12 +267,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->resetApplicant(new ResetApplicantRequest('123456'));
     }
 
     public function testResetApplicantWhenCanNotDecodeResponse(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -253,12 +284,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->resetApplicant(new ResetApplicantRequest('123456'));
     }
 
     public function testGetApplicantStatus(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -273,7 +306,10 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act
         $applicantStatusResponse = $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
+
+        // Assert
         self::assertSame([
             'a' => 'b',
         ], $applicantStatusResponse->asArray());
@@ -281,6 +317,7 @@ final class ClientTest extends Unit
 
     public function testGetApplicantStatusWhenResponseCodeIsNot200(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -293,12 +330,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
     }
 
     public function testGetApplicantStatusWhenCanNotDecodeResponse(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -308,12 +347,14 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
         $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
     }
 
     public function testGetDocumentImages(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -328,14 +369,17 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
-        $applicantStatusResponse = $client->getDocumentImages(new DocumentImagesRequest('123456', '654321'));
+        // Act
+        $applicantStatusResponse = $client->getDocumentImage(new DocumentImageRequest('123456', '654321'));
 
+        // Assert
         self::assertSame('contents', (string) $applicantStatusResponse->asStream());
         self::assertSame('text/plain', $applicantStatusResponse->getContentType());
     }
 
     public function testGetDocumentImagesWhenResponseCodeIsNot200(): void
     {
+        // Arrange
         /** @var ClientInterface $httpClient */
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
@@ -348,8 +392,9 @@ final class ClientTest extends Unit
 
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
+        // Act && Assert
         $this->expectException(BadResponseException::class);
-        $client->getDocumentImages(new DocumentImagesRequest('123456', '654321'));
+        $client->getDocumentImage(new DocumentImageRequest('123456', '654321'));
     }
 
     private function getRequestSigner(): RequestSignerInterface

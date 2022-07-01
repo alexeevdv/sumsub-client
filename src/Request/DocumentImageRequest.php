@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace alexeevdv\SumSub\Request;
 
-final class DocumentImagesRequest
+final class DocumentImageRequest
 {
     /**
      * @var string
@@ -16,28 +16,18 @@ final class DocumentImagesRequest
      */
     private $imageId;
 
-    /**
-     * @param $inspectionId
-     * @param $imageId
-     */
-    public function __construct($inspectionId, $imageId)
+    public function __construct(string $inspectionId, string $imageId)
     {
         $this->inspectionId = $inspectionId;
         $this->imageId = $imageId;
     }
 
-    /**
-     * @return string
-     */
-    public function getInspectionId()
+    public function getInspectionId(): string
     {
         return $this->inspectionId;
     }
 
-    /**
-     * @return string
-     */
-    public function getImageId()
+    public function getImageId(): string
     {
         return $this->imageId;
     }

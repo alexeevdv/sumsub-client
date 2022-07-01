@@ -27,40 +27,24 @@ final class AccessTokenRequest
      */
     private $ttlInSecs;
 
-    /**
-     * AccessTokenRequest constructor.
-     *
-     * @param string   $userId
-     * @param string   $levelName
-     * @param int|null $ttlInSecs
-     */
-    public function __construct($userId, $levelName, $ttlInSecs = null)
+    public function __construct(string $userId, string $levelName, ?int $ttlInSecs = null)
     {
         $this->userId = $userId;
         $this->levelName = $levelName;
         $this->ttlInSecs = $ttlInSecs;
     }
 
-    /**
-     * @return string
-     */
-    public function getUserId()
+    public function getUserId(): string
     {
         return $this->userId;
     }
 
-    /**
-     * @return string
-     */
-    public function getLevelName()
+    public function getLevelName(): string
     {
         return $this->levelName;
     }
 
-    /**
-     * @return int|null
-     */
-    public function getTtlInSecs()
+    public function getTtlInSecs(): ?int
     {
         return $this->ttlInSecs;
     }

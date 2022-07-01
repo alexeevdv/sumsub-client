@@ -7,7 +7,7 @@ namespace alexeevdv\SumSub\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 
-final class DocumentImagesResponse
+final class DocumentImageResponse
 {
     /**
      * @var ResponseInterface

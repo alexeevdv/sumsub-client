@@ -11,10 +11,7 @@ final class InspectionChecksRequest
      */
     private $inspectionId;
 
-    /**
-     * @param $inspectionId
-     */
-    public function __construct($inspectionId)
+    public function __construct(string $inspectionId)
     {
         $this->inspectionId = $inspectionId;
     }

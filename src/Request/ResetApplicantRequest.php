@@ -11,21 +11,12 @@ final class ResetApplicantRequest
      */
     private $applicantId;
 
-    /**
-     * @param string $applicantId
-     */
-    public function __construct($applicantId)
+    public function __construct(string $applicantId)
     {
-        if ($applicantId === null) {
-            throw new \InvalidArgumentException('Applicant ID can not be null.');
-        }
         $this->applicantId = $applicantId;
     }
 
-    /**
-     * @return string
-     */
-    public function getApplicantId()
+    public function getApplicantId(): string
     {
         return $this->applicantId;
     }

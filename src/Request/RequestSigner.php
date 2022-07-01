@@ -19,16 +19,11 @@ final class RequestSigner implements RequestSignerInterface
     private $secretKey;
 
     /**
-     * @var \Closure
+     * @var callable
      */
     private $timeFunction;
 
-    /**
-     * @param string   $appToken
-     * @param string   $secretKey
-     * @param \Closure $timeFunction
-     */
-    public function __construct($appToken, $secretKey, $timeFunction = null)
+    public function __construct(string $appToken, string $secretKey, callable $timeFunction = null)
     {
         $this->appToken = $appToken;
         $this->secretKey = $secretKey;
@@ -47,7 +42,7 @@ final class RequestSigner implements RequestSignerInterface
         $httpMethod = strtoupper($request->getMethod());
         $url = $request->getUri()->getPath();
         $query = $request->getUri()->getQuery();
-        if (strlen($query) > 0) {
+        if ($query !== '') {
             $url .= '?' . $query;
         }
 
