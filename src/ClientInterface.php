@@ -7,11 +7,13 @@ use alexeevdv\SumSub\Request\AccessTokenRequest;
 use alexeevdv\SumSub\Request\ApplicantDataRequest;
 use alexeevdv\SumSub\Request\ApplicantStatusRequest;
 use alexeevdv\SumSub\Request\DocumentImagesRequest;
+use alexeevdv\SumSub\Request\InspectionChecksRequest;
 use alexeevdv\SumSub\Request\ResetApplicantRequest;
 use alexeevdv\SumSub\Response\AccessTokenResponse;
 use alexeevdv\SumSub\Response\ApplicantDataResponse;
 use alexeevdv\SumSub\Response\ApplicantStatusResponse;
 use alexeevdv\SumSub\Response\DocumentImagesResponse;
+use alexeevdv\SumSub\Response\InspectionChecksResponse;
 
 interface ClientInterface
 {
@@ -49,4 +51,10 @@ interface ClientInterface
      * @throws Exception
      */
     public function getDocumentImages(DocumentImagesRequest $request): DocumentImagesResponse;
+
+    /**
+     * Get inspection checks
+     * @throws Exception
+     */
+    public function getInspectionChecks(InspectionChecksRequest $request) : InspectionChecksResponse;
 }
