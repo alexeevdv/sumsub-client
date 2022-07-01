@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub\Request;
 
 use Psr\Http\Message\RequestInterface;
@@ -17,16 +19,11 @@ final class RequestSigner implements RequestSignerInterface
     private $secretKey;
 
     /**
-     * @var \Closure
+     * @var callable
      */
     private $timeFunction;
 
-    /**
-     * @param string $appToken
-     * @param string $secretKey
-     * @param \Closure $timeFunction
-     */
-    public function __construct($appToken, $secretKey, $timeFunction = null)
+    public function __construct(string $appToken, string $secretKey, callable $timeFunction = null)
     {
         $this->appToken = $appToken;
         $this->secretKey = $secretKey;
@@ -45,7 +42,7 @@ final class RequestSigner implements RequestSignerInterface
         $httpMethod = strtoupper($request->getMethod());
         $url = $request->getUri()->getPath();
         $query = $request->getUri()->getQuery();
-        if (strlen($query) > 0) {
+        if ($query !== '') {
             $url .= '?' . $query;
         }
 
@@ -58,7 +55,6 @@ final class RequestSigner implements RequestSignerInterface
         return $request
             ->withHeader('X-App-Token', $this->appToken)
             ->withHeader('X-App-Access-Ts', $currentTimestamp)
-            ->withHeader('X-App-Access-Sig', $signature)
-        ;
+            ->withHeader('X-App-Access-Sig', $signature);
     }
 }

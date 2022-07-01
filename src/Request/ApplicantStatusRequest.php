@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace alexeevdv\SumSub\Request;
 
-final class ResetApplicantRequest
+final class ApplicantStatusRequest
 {
     /**
      * @var string

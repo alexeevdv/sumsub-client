@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace alexeevdv\SumSub\Response;
 
 final class AccessTokenResponse
 {
     /**
      * A newly generated access token for an applicant.
+     *
      * @var string
      */
     private $token;

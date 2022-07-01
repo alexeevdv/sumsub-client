@@ -25,6 +25,6 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist
       - name: Check code style
-        run: php vendor/bin/phpcs --standard=PSR12 --extensions=php src
+        run: composer ecs
       - name: Run unit tests
-        run: php vendor/bin/codecept run --coverage --coverage-xml
+        run: composer codeception
