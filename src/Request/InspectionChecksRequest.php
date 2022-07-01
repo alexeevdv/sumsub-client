@@ -21,7 +21,7 @@ final class InspectionChecksRequest
     /**
      * @return string
      */
-    public function getInspectionId() : string
+    public function getInspectionId(): string
     {
         return $this->inspectionId;
     }

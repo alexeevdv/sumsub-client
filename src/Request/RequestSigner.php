@@ -22,8 +22,8 @@ final class RequestSigner implements RequestSignerInterface
     private $timeFunction;
 
     /**
-     * @param string $appToken
-     * @param string $secretKey
+     * @param string   $appToken
+     * @param string   $secretKey
      * @param \Closure $timeFunction
      */
     public function __construct($appToken, $secretKey, $timeFunction = null)
@@ -58,7 +58,6 @@ final class RequestSigner implements RequestSignerInterface
         return $request
             ->withHeader('X-App-Token', $this->appToken)
             ->withHeader('X-App-Access-Ts', $currentTimestamp)
-            ->withHeader('X-App-Access-Sig', $signature)
-        ;
+            ->withHeader('X-App-Access-Sig', $signature);
     }
 }

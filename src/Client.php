@@ -49,10 +49,10 @@ final class Client implements ClientInterface
     private $baseUrl;
 
     /**
-     * @param HttpClientInterface $httpClient
+     * @param HttpClientInterface     $httpClient
      * @param RequestFactoryInterface $requestFactory
-     * @param RequestSignerInterface $requestSigner
-     * @param string $baseUrl
+     * @param RequestSignerInterface  $requestSigner
+     * @param string                  $baseUrl
      */
     public function __construct(
         $httpClient,
@@ -177,7 +177,7 @@ final class Client implements ClientInterface
         return new DocumentImagesResponse($httpResponse);
     }
 
-    public function getInspectionChecks(InspectionChecksRequest $request) : InspectionChecksResponse
+    public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse
     {
         $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() .
             '/checks';
@@ -196,8 +196,7 @@ final class Client implements ClientInterface
     {
         $httpRequest = $this->requestFactory
             ->createRequest($method, $uri)
-            ->withHeader('Accept', 'application/json')
-        ;
+            ->withHeader('Accept', 'application/json');
         $httpRequest = $this->requestSigner->sign($httpRequest);
 
         return $httpRequest;
