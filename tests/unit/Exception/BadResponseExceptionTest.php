@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tests\unit\Exception;
 
-use alexeevdv\SumSub\Exception\BadResponseException;
+use FaritSlv\SumSub\Exception\BadResponseException;
 use Codeception\Test\Unit;
 use GuzzleHttp\Psr7\Response;
 

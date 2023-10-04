@@ -13,7 +13,7 @@ API client for sumsub.com
 ## Installation
 
 ```shell script
-composer require alexeevdv/sumsub-client
+composer require farit-slv/sumsub-client
 ```
 
 ## Client configuration
@@ -21,8 +21,8 @@ composer require alexeevdv/sumsub-client
 Client works with any [PSR-18 compatible HTTP client](https://packagist.org/providers/psr/http-client-implementation) and require [PSR-17 HTTP factory](https://packagist.org/providers/psr/http-factory-implementation).
 
 ```php
-use alexeevdv\SumSub\Client;
-use alexeevdv\SumSub\Request\RequestSigner;
+use FaritSlv\SumSub\Client;
+use FaritSlv\SumSub\Request\RequestSigner;
 
 $requestSigner = new RequestSigner('Your APP token', 'Your secret');
 
@@ -36,7 +36,7 @@ $client = new Client(
 ## Getting SDKs access token
 
 ```php
-use alexeevdv\SumSub\Request\AccessTokenRequest;
+use FaritSlv\SumSub\Request\AccessTokenRequest;
 
 $externalUserId = 'some-id';
 $levelName = 'some-level';
@@ -48,7 +48,7 @@ $accessToken = $response->getToken();
 ## Getting applicant data by applicant id
 
 ```php
-use alexeevdv\SumSub\Request\ApplicantDataRequest;
+use FaritSlv\SumSub\Request\ApplicantDataRequest;
 
 $applicantId = 'some-id';
 $response = $client->getApplicantData(new ApplicantDataRequest($applicantId));
@@ -58,7 +58,7 @@ $applicantData = $response->asArray();
 ## Getting applicant data by external user id
 
 ```php
-use alexeevdv\SumSub\Request\ApplicantDataRequest;
+use FaritSlv\SumSub\Request\ApplicantDataRequest;
 
 $externalUserId = 'some-id';
 $response = $client->getApplicantData(new ApplicantDataRequest(null, $externalUserId));
@@ -68,7 +68,7 @@ $applicantData = $response->asArray();
 ## Resetting an applicant
 
 ```php
-use alexeevdv\SumSub\Request\ResetApplicantRequest;
+use FaritSlv\SumSub\Request\ResetApplicantRequest;
 
 $applicantId = 'some-id';
 $client->resetApplicant(new ResetApplicantRequest($applicantId));
@@ -77,7 +77,7 @@ $client->resetApplicant(new ResetApplicantRequest($applicantId));
 ## Getting applicant status
 
 ```php
-use alexeevdv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\ApplicantStatusRequest;
 
 $applicantId = 'some-id';
 $response = $client->getApplicantStatus(new ApplicantStatusRequest($applicantId));
@@ -87,7 +87,7 @@ $applicantStatus = $response->asArray();
 ## Getting document images
 
 ```php
-use alexeevdv\SumSub\Request\DocumentImageRequest;
+use FaritSlv\SumSub\Request\DocumentImageRequest;
 
 $inspectionId = 'some-id';
 $imageId = '123';
@@ -99,7 +99,7 @@ $conentType = $response->getContentType();
 ## Getting inspection checks
 
 ```php
-use alexeevdv\SumSub\Request\InspectionChecksRequest;
+use FaritSlv\SumSub\Request\InspectionChecksRequest;
 
 $inspectionId = 'some-id';
 $response = $client->getInspectionChecks(new InspectionChecksRequest($inspectionId));

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace alexeevdv\SumSub\Exception;
+namespace FaritSlv\SumSub\Exception;
 
 use Psr\Http\Message\ResponseInterface;
 use Throwable;

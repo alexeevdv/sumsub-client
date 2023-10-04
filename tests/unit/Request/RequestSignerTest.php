@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tests\unit\Request;
 
-use alexeevdv\SumSub\Request\RequestSigner;
+use FaritSlv\SumSub\Request\RequestSigner;
 use Codeception\Test\Unit;
 use GuzzleHttp\Psr7\Request;
 

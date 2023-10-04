@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace tests\unit\Exception;
 
-use alexeevdv\SumSub\Exception\TransportException;
+use FaritSlv\SumSub\Exception\TransportException;
 use Codeception\Test\Unit;
 
 final class TransportExceptionTest extends Unit

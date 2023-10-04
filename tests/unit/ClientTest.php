@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace tests\unit;
 
-use alexeevdv\SumSub\Client;
-use alexeevdv\SumSub\Exception\BadResponseException;
-use alexeevdv\SumSub\Exception\TransportException;
-use alexeevdv\SumSub\Request\AccessTokenRequest;
-use alexeevdv\SumSub\Request\ApplicantDataRequest;
-use alexeevdv\SumSub\Request\ApplicantStatusRequest;
-use alexeevdv\SumSub\Request\DocumentImageRequest;
-use alexeevdv\SumSub\Request\RequestSignerInterface;
-use alexeevdv\SumSub\Request\ResetApplicantRequest;
+use FaritSlv\SumSub\Client;
+use FaritSlv\SumSub\Exception\BadResponseException;
+use FaritSlv\SumSub\Exception\TransportException;
+use FaritSlv\SumSub\Request\AccessTokenRequest;
+use FaritSlv\SumSub\Request\ApplicantDataRequest;
+use FaritSlv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\DocumentImageRequest;
+use FaritSlv\SumSub\Request\RequestSignerInterface;
+use FaritSlv\SumSub\Request\ResetApplicantRequest;
 use Codeception\Stub\Expected;
 use Codeception\Test\Unit;
 use GuzzleHttp\Psr7\Request;

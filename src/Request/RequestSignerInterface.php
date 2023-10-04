@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace alexeevdv\SumSub\Request;
+namespace FaritSlv\SumSub\Request;
 
 use Psr\Http\Message\RequestInterface;
 

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace alexeevdv\SumSub;
+namespace FaritSlv\SumSub;
 
-use alexeevdv\SumSub\Exception\Exception;
-use alexeevdv\SumSub\Request\AccessTokenRequest;
-use alexeevdv\SumSub\Request\ApplicantDataRequest;
-use alexeevdv\SumSub\Request\ApplicantStatusRequest;
-use alexeevdv\SumSub\Request\DocumentImageRequest;
-use alexeevdv\SumSub\Request\InspectionChecksRequest;
-use alexeevdv\SumSub\Request\ResetApplicantRequest;
-use alexeevdv\SumSub\Response\AccessTokenResponse;
-use alexeevdv\SumSub\Response\ApplicantDataResponse;
-use alexeevdv\SumSub\Response\ApplicantStatusResponse;
-use alexeevdv\SumSub\Response\DocumentImageResponse;
-use alexeevdv\SumSub\Response\InspectionChecksResponse;
+use FaritSlv\SumSub\Exception\Exception;
+use FaritSlv\SumSub\Request\AccessTokenRequest;
+use FaritSlv\SumSub\Request\ApplicantDataRequest;
+use FaritSlv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\DocumentImageRequest;
+use FaritSlv\SumSub\Request\InspectionChecksRequest;
+use FaritSlv\SumSub\Request\ResetApplicantRequest;
+use FaritSlv\SumSub\Response\AccessTokenResponse;
+use FaritSlv\SumSub\Response\ApplicantDataResponse;
+use FaritSlv\SumSub\Response\ApplicantStatusResponse;
+use FaritSlv\SumSub\Response\DocumentImageResponse;
+use FaritSlv\SumSub\Response\InspectionChecksResponse;
 
 interface ClientInterface
 {

@@ -1,14 +1,24 @@
 {
-  "name": "alexeevdv/sumsub-client",
+  "name": "farit-slv/sumsub-client",
   "description": "API client for sumsub.com",
   "type": "library",
   "license": "MIT",
+  "authors": [
+    {
+      "name": "alexeevdv",
+      "email": "mail@alexeevdv.ru"
+    },
+    {
+      "name": "FaritSlv",
+      "email": "faritslv@github.loc"
+    }
+  ],
   "config": {
     "sort-packages": true
   },
   "autoload": {
     "psr-4": {
-      "alexeevdv\\SumSub\\": "src"
+      "FaritSlv\\SumSub\\": "src"
     }
   },
   "autoload-dev": {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace alexeevdv\SumSub\Response;
+namespace FaritSlv\SumSub\Response;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;

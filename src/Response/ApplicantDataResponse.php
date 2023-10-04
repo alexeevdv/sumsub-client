@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace alexeevdv\SumSub\Response;
+namespace FaritSlv\SumSub\Response;
 
 final class ApplicantDataResponse
 {
