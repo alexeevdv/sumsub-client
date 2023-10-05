@@ -7,13 +7,13 @@ namespace FaritSlv\SumSub;
 use FaritSlv\SumSub\Exception\Exception;
 use FaritSlv\SumSub\Request\AccessTokenRequest;
 use FaritSlv\SumSub\Request\ApplicantDataRequest;
-use FaritSlv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\ApplicantInfoRequest;
+use FaritSlv\SumSub\Request\ApplicantRequest;
+use FaritSlv\SumSub\Request\ApplicantStatusPendingRequest;
 use FaritSlv\SumSub\Request\DocumentImageRequest;
 use FaritSlv\SumSub\Request\InspectionChecksRequest;
-use FaritSlv\SumSub\Request\ResetApplicantRequest;
 use FaritSlv\SumSub\Response\AccessTokenResponse;
 use FaritSlv\SumSub\Response\ApplicantDataResponse;
-use FaritSlv\SumSub\Response\ApplicantStatusResponse;
 use FaritSlv\SumSub\Response\DocumentImageResponse;
 use FaritSlv\SumSub\Response\InspectionChecksResponse;
 
@@ -41,7 +41,23 @@ interface ClientInterface
      * @see https://developers.sumsub.com/api-reference/#resetting-an-applicant
      * @throws Exception
      */
-    public function resetApplicant(ResetApplicantRequest $request): void;
+    public function resetApplicant(ApplicantRequest $request): void;
+
+    /**
+     * Adding an ID document
+     *
+     * @see https://developers.cyberity.ru/api-reference/#requesting-an-applicant-check
+     * @throws Exception
+     */
+    public function getApplicantStatusPending(ApplicantStatusPendingRequest $request): ApplicantDataResponse;
+
+    /**
+     * Adding an ID document
+     *
+     * @see https://developers.cyberity.ru/api-reference/#adding-an-id-document
+     * @throws Exception
+     */
+    public function getApplicantInfo(ApplicantInfoRequest $request): ApplicantDataResponse;
 
     /**
      * Get applicant status
@@ -49,7 +65,14 @@ interface ClientInterface
      * @see https://developers.sumsub.com/api-reference/#getting-applicant-status-api
      * @throws Exception
      */
-    public function getApplicantStatus(ApplicantStatusRequest $request): ApplicantStatusResponse;
+    public function getApplicantStatus(ApplicantRequest $request): ApplicantDataResponse;
+
+    /**
+     * Get inspection checks
+     *
+     * @throws Exception
+     */
+    public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse;
 
     /**
      * Get document images
@@ -58,11 +81,4 @@ interface ClientInterface
      * @throws Exception
      */
     public function getDocumentImage(DocumentImageRequest $request): DocumentImageResponse;
-
-    /**
-     * Get inspection checks
-     *
-     * @throws Exception
-     */
-    public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse;
 }

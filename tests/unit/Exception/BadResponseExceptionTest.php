@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tests\unit\Exception;
 
-use FaritSlv\SumSub\Exception\BadResponseException;
 use Codeception\Test\Unit;
+use FaritSlv\SumSub\Exception\BadResponseException;
 use GuzzleHttp\Psr7\Response;
 
 final class BadResponseExceptionTest extends Unit

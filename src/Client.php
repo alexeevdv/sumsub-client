@@ -8,14 +8,14 @@ use FaritSlv\SumSub\Exception\BadResponseException;
 use FaritSlv\SumSub\Exception\TransportException;
 use FaritSlv\SumSub\Request\AccessTokenRequest;
 use FaritSlv\SumSub\Request\ApplicantDataRequest;
-use FaritSlv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\ApplicantInfoRequest;
+use FaritSlv\SumSub\Request\ApplicantRequest;
+use FaritSlv\SumSub\Request\ApplicantStatusPendingRequest;
 use FaritSlv\SumSub\Request\DocumentImageRequest;
 use FaritSlv\SumSub\Request\InspectionChecksRequest;
 use FaritSlv\SumSub\Request\RequestSignerInterface;
-use FaritSlv\SumSub\Request\ResetApplicantRequest;
 use FaritSlv\SumSub\Response\AccessTokenResponse;
 use FaritSlv\SumSub\Response\ApplicantDataResponse;
-use FaritSlv\SumSub\Response\ApplicantStatusResponse;
 use FaritSlv\SumSub\Response\DocumentImageResponse;
 use FaritSlv\SumSub\Response\InspectionChecksResponse;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -23,6 +23,7 @@ use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 final class Client implements ClientInterface
 {
@@ -77,16 +78,10 @@ final class Client implements ClientInterface
             $queryParams['ttlInSecs'] = $request->getTtlInSecs();
         }
 
-        $url = sprintf('%s/resources/accessTokens?%s', $this->baseUrl, http_build_query($queryParams));
-
-        $httpRequest = $this->createApiRequest('POST', $url);
-        $httpResponse = $this->sendApiRequest($httpRequest);
-
-        if ($httpResponse->getStatusCode() !== 200) {
-            throw new BadResponseException($httpResponse);
-        }
-
-        $decodedResponse = $this->decodeResponse($httpResponse);
+        $decodedResponse = $this->request(
+            'POST',
+            '/resources/accessTokens?' . http_build_query($queryParams)
+        );
 
         return new AccessTokenResponse($decodedResponse['token'], $decodedResponse['userId']);
     }
@@ -97,101 +92,136 @@ final class Client implements ClientInterface
      */
     public function getApplicantData(ApplicantDataRequest $request): ApplicantDataResponse
     {
+        $applicantId = '-;externalUserId=' . $request->getExternalUserId();
         if ($request->getApplicantId() !== null) {
-            $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/one';
-        } else {
-            $url = $this->baseUrl . '/resources/applicants/-;externalUserId=' . $request->getExternalUserId() . '/one';
+            $applicantId = $request->getApplicantId();
         }
 
-        $httpRequest = $this->createApiRequest('GET', $url);
-        $httpResponse = $this->sendApiRequest($httpRequest);
-
-        if ($httpResponse->getStatusCode() !== 200) {
-            throw new BadResponseException($httpResponse);
-        }
-
-        return new ApplicantDataResponse($this->decodeResponse($httpResponse));
+        return new ApplicantDataResponse($this->request(
+            'GET',
+            '/resources/applicants/' . $applicantId . '/one'
+        ));
     }
 
     /**
      * @throws BadResponseException
      * @throws TransportException
      */
-    public function resetApplicant(ResetApplicantRequest $request): void
+    public function resetApplicant(ApplicantRequest $request): void
     {
-        $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/reset';
-
-        $httpRequest = $this->createApiRequest('POST', $url);
-        $httpResponse = $this->sendApiRequest($httpRequest);
-
-        if ($httpResponse->getStatusCode() !== 200) {
-            throw new BadResponseException($httpResponse);
-        }
-
-        $decodedResponse = $this->decodeResponse($httpResponse);
-        $isOk = ($decodedResponse['ok'] ?? 0) === 1;
-
-        if (! $isOk) {
-            throw new BadResponseException($httpResponse);
-        }
+        $this->request('POST', '/resources/applicants/' . $request->getApplicantId() . '/reset', true);
     }
 
     /**
      * @throws BadResponseException
      * @throws TransportException
      */
-    public function getApplicantStatus(ApplicantStatusRequest $request): ApplicantStatusResponse
+    public function getApplicantStatus(ApplicantRequest $request): ApplicantDataResponse
     {
-        $url = $this->baseUrl . '/resources/applicants/' . $request->getApplicantId() . '/requiredIdDocsStatus';
-
-        $httpRequest = $this->createApiRequest('GET', $url);
-        $httpResponse = $this->sendApiRequest($httpRequest);
-
-        if ($httpResponse->getStatusCode() !== 200) {
-            throw new BadResponseException($httpResponse);
-        }
-
-        return new ApplicantStatusResponse($this->decodeResponse($httpResponse));
+        return new ApplicantDataResponse($this->request(
+            'GET',
+            '/resources/applicants/' . $request->getApplicantId() . '/requiredIdDocsStatus'
+        ));
     }
 
     /**
      * @throws BadResponseException
      * @throws TransportException
      */
+    public function getApplicantStatusPending(ApplicantStatusPendingRequest $request): ApplicantDataResponse
+    {
+        $url = '/resources/applicants/' . $request->getApplicantId() . '/status/pending';
+
+        $queryParams = [];
+        if ($request->getReason() !== null) {
+            $queryParams['reason'] = $request->getReason();
+        }
+        if ($request->getReasonCode() !== null) {
+            $queryParams['reasonCode'] = $request->getReasonCode();
+        }
+        if (count($queryParams) > 0) {
+            $url .= '?' . http_build_query($queryParams);
+        }
+
+        return new ApplicantdataResponse($this->request('POST', $url));
+    }
+
+    /**
+     * @throws BadResponseException
+     * @throws TransportException
+     */
+    public function getApplicantInfo(ApplicantInfoRequest $request): ApplicantDataResponse
+    {
+        $url = '/resources/applicants/' . $request->getApplicantId() . '/info/idDoc';
+        $headers = [
+            'Content-Type' => 'multipart/form-data',
+            'X-Return-Doc-Warnings' => $request->isReturnDocWarnings(),
+        ];
+
+        return new ApplicantDataResponse(
+            $this->request('POST', $url, false, true, $headers, $request->getPostData())
+        );
+    }
+
     public function getDocumentImage(DocumentImageRequest $request): DocumentImageResponse
     {
-        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() . '/resources/' . $request->getImageId();
-
-        $httpRequest = $this->createApiRequest('GET', $url);
-        $httpResponse = $this->sendApiRequest($httpRequest);
-
-        if ($httpResponse->getStatusCode() !== 200) {
-            throw new BadResponseException($httpResponse);
-        }
-
-        return new DocumentImageResponse($httpResponse);
+        return new DocumentImageResponse(
+            $this->request(
+                'GET',
+                sprintf('/resources/inspections/%s/resources/%s', $request->getInspectionId(), $request->getImageId()),
+                false,
+                false
+            )
+        );
     }
 
     public function getInspectionChecks(InspectionChecksRequest $request): InspectionChecksResponse
     {
-        $url = $this->baseUrl . '/resources/inspections/' . $request->getInspectionId() . '/checks';
-
-        $httpRequest = $this->createApiRequest('GET', $url);
-        $httpResponse = $this->sendApiRequest($httpRequest);
-
-        if ($httpResponse->getStatusCode() !== 200) {
-            throw new BadResponseException($httpResponse);
-        }
-
-        return new InspectionChecksResponse($this->decodeResponse($httpResponse));
+        return new InspectionChecksResponse($this->request('GET', '/resources/inspections/' . $request->getInspectionId() . '/checks'));
     }
 
-    private function createApiRequest(string $method, string $uri): RequestInterface
+    /**
+     * @return array|ResponseInterface
+     * @throws TransportException
+     * @throws BadResponseException
+     */
+    private function request(string $method, string $uri, bool $checkOk = false, $asJson = true, array $headers = [], ?StreamInterface $stream = null)
     {
-        $httpRequest = $this->requestFactory
+        $request = $this->createApiRequest($method, $this->baseUrl . $uri, $headers);
+
+        if ($stream !== null) {
+            $request = $request->withBody($stream);
+        }
+
+        $response = $this->sendApiRequest($request);
+
+        if ($response->getStatusCode() !== 200) {
+            throw new BadResponseException($response);
+        }
+
+        if (! $asJson) {
+            return $response;
+        }
+
+        $result = $this->decodeResponse($response);
+        if ($checkOk && ($result['ok'] ?? 0) === 0) {
+            throw new BadResponseException($response);
+        }
+
+        return $result;
+    }
+
+    private function createApiRequest(string $method, string $uri, array $headers = []): RequestInterface
+    {
+        $request = $this->requestFactory
             ->createRequest($method, $uri)
             ->withHeader('Accept', 'application/json');
-        return $this->requestSigner->sign($httpRequest);
+
+        foreach ($headers as $key => $header) {
+            $request = $request->withHeader($key, $header);
+        }
+
+        return $this->requestSigner->sign($request);
     }
 
     /**

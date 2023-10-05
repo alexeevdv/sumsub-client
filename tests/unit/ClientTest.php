@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace tests\unit;
 
+use Codeception\Stub\Expected;
+use Codeception\Test\Unit;
 use FaritSlv\SumSub\Client;
 use FaritSlv\SumSub\Exception\BadResponseException;
 use FaritSlv\SumSub\Exception\TransportException;
 use FaritSlv\SumSub\Request\AccessTokenRequest;
 use FaritSlv\SumSub\Request\ApplicantDataRequest;
-use FaritSlv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\ApplicantInfoRequest;
+use FaritSlv\SumSub\Request\ApplicantRequest;
+use FaritSlv\SumSub\Request\ApplicantStatusPendingRequest;
 use FaritSlv\SumSub\Request\DocumentImageRequest;
 use FaritSlv\SumSub\Request\RequestSignerInterface;
-use FaritSlv\SumSub\Request\ResetApplicantRequest;
-use Codeception\Stub\Expected;
-use Codeception\Test\Unit;
+use GuzzleHttp\Psr7\MultipartStream;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
 use Psr\Http\Client\ClientExceptionInterface;
@@ -225,7 +227,7 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         // Act
-        $client->resetApplicant(new ResetApplicantRequest('123456'));
+        $client->resetApplicant(new ApplicantRequest('123456'));
 
         // Assert
     }
@@ -249,9 +251,12 @@ final class ClientTest extends Unit
 
         // Act && Assert
         $this->expectException(BadResponseException::class);
-        $client->resetApplicant(new ResetApplicantRequest('123456'));
+        $client->resetApplicant(new ApplicantRequest('123456'));
     }
 
+    /**
+     * @throws TransportException
+     */
     public function testResetApplicantWhenResponseCodeIsNot200(): void
     {
         // Arrange
@@ -269,7 +274,7 @@ final class ClientTest extends Unit
 
         // Act && Assert
         $this->expectException(BadResponseException::class);
-        $client->resetApplicant(new ResetApplicantRequest('123456'));
+        $client->resetApplicant(new ApplicantRequest('123456'));
     }
 
     public function testResetApplicantWhenCanNotDecodeResponse(): void
@@ -286,7 +291,7 @@ final class ClientTest extends Unit
 
         // Act && Assert
         $this->expectException(BadResponseException::class);
-        $client->resetApplicant(new ResetApplicantRequest('123456'));
+        $client->resetApplicant(new ApplicantRequest('123456'));
     }
 
     public function testGetApplicantStatus(): void
@@ -307,12 +312,74 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         // Act
-        $applicantStatusResponse = $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
+        $applicantStatusResponse = $client->getApplicantStatus(new ApplicantRequest('123456'));
 
         // Assert
         self::assertSame([
             'a' => 'b',
         ], $applicantStatusResponse->asArray());
+    }
+
+    public function testGetApplicantStatusPending(): void
+    {
+        // Arrange
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/applicants/123456/status/pending', $request->getUri()->getPath());
+                self::assertSame('reason=someReason&reasonCode=wlCheck', $request->getUri()->getQuery());
+
+                return new Response(200, [], json_encode([
+                    'ok' => 1,
+                ]));
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        // Act
+        $client->getApplicantStatusPending(new ApplicantStatusPendingRequest('123456', 'someReason', 'wlCheck'));
+    }
+
+    public function testGetApplicantInfo(): void
+    {
+        // Arrange
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/applicants/123456/info/idDoc', $request->getUri()->getPath());
+                self::assertSame('', $request->getUri()->getQuery());
+                self::assertSame(1, (int) $request->getHeader('X-Return-Doc-Warnings')[0]);
+                self::assertSame('multipart/form-data', $request->getHeader('Content-Type')[0]);
+
+                return new Response(200, [], json_encode([
+                    'idDocType' => 'PASSPORT',
+                    'country' => 'GBR',
+                    'issuedDate' => '2015-01-02',
+                    'number' => '40111234567',
+                    'dob' => '2000-02-01',
+                    'placeOfBirth' => 'London',
+                ]));
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+        $elements = [
+            [
+                'name' => 'metadata',
+                'contents' => json_encode([
+                    'idDocType' => 'PASSPORT',
+                    'country' => 'GBR',
+                    'number' => '40111234567',
+                    'issuedDate' => '2015-01-02',
+                    'dob' => '2000-02-01',
+                    'placeOfBirth' => 'London',
+                ]),
+            ],
+        ];
+
+        // Act
+        $applicantInfo = $client->getApplicantInfo(new ApplicantInfoRequest('123456', new MultipartStream($elements), true));
     }
 
     public function testGetApplicantStatusWhenResponseCodeIsNot200(): void
@@ -332,7 +399,7 @@ final class ClientTest extends Unit
 
         // Act && Assert
         $this->expectException(BadResponseException::class);
-        $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
+        $client->getApplicantStatus(new ApplicantRequest('123456'));
     }
 
     public function testGetApplicantStatusWhenCanNotDecodeResponse(): void
@@ -349,7 +416,7 @@ final class ClientTest extends Unit
 
         // Act && Assert
         $this->expectException(BadResponseException::class);
-        $client->getApplicantStatus(new ApplicantStatusRequest('123456'));
+        $client->getApplicantStatus(new ApplicantRequest('123456'));
     }
 
     public function testGetDocumentImages(): void

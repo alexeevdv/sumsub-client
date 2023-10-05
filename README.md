@@ -68,19 +68,19 @@ $applicantData = $response->asArray();
 ## Resetting an applicant
 
 ```php
-use FaritSlv\SumSub\Request\ResetApplicantRequest;
+use FaritSlv\SumSub\Request\ApplicantRequest;
 
 $applicantId = 'some-id';
-$client->resetApplicant(new ResetApplicantRequest($applicantId));
+$client->resetApplicant(new ApplicantRequest($applicantId));
 ```
 
 ## Getting applicant status
 
 ```php
-use FaritSlv\SumSub\Request\ApplicantStatusRequest;
+use FaritSlv\SumSub\Request\ApplicantRequest;
 
 $applicantId = 'some-id';
-$response = $client->getApplicantStatus(new ApplicantStatusRequest($applicantId));
+$response = $client->getApplicantStatus(new ApplicantRequest($applicantId));
 $applicantStatus = $response->asArray();
 ```
 
@@ -93,7 +93,7 @@ $inspectionId = 'some-id';
 $imageId = '123';
 $response = $client->getDocumentImages(new DocumentImageRequest($inspectionId, $imageId));
 $stream = $response->asStream();
-$conentType = $response->getContentType();
+$contentType = $response->getContentType();
 ```
 
 ## Getting inspection checks

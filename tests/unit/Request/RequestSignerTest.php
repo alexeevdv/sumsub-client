@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace tests\unit\Request;
 
-use FaritSlv\SumSub\Request\RequestSigner;
 use Codeception\Test\Unit;
+use FaritSlv\SumSub\Request\RequestSigner;
 use GuzzleHttp\Psr7\Request;
 
 final class RequestSignerTest extends Unit
