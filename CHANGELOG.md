@@ -1,6 +1,22 @@
 Under development
 -----------------
 
+0.7.0 (2023-10-06)
+-----------------
+- Fix small logic errors
+- Change host sumsub.com to cyberity.ru
+
+0.6.0 (2023-10-05)
+-----------------
+- Feature: getApplicantInfo() method support
+- Feature: getApplicantStatusPending() method support
+- Refactoring 
+
+0.5.0 (2023-10-04)
+-----------------
+- Add author
+- change namespace
+
 0.4.0 (2022-07-01)
 -----------------
 - Feature: getApplicantStatus() method support (sspat)

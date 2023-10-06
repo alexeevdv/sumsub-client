@@ -1,6 +1,6 @@
 {
   "name": "farit-slv/sumsub-client",
-  "description": "API client for sumsub.com",
+  "description": "API client for cyberity.ru (sumsub.com)",
   "type": "library",
   "license": "MIT",
   "authors": [

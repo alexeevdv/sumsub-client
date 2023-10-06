@@ -8,7 +8,7 @@ sumsub-client
 ![PHP 8.0](https://img.shields.io/badge/PHP-8.0-green.svg)
 ![PHP 8.1](https://img.shields.io/badge/PHP-8.1-green.svg)
 
-API client for sumsub.com
+API client for cyberity.ru (sumsub.com)
 
 ## Installation
 

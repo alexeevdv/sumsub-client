@@ -27,9 +27,9 @@ use Psr\Http\Message\StreamInterface;
 
 final class Client implements ClientInterface
 {
-    public const PRODUCTION_BASE_URI = 'https://api.sumsub.com';
+    public const PRODUCTION_BASE_URI = 'https://api.cyberity.ru';
 
-    public const STAGING_BASE_URI = 'https://test-api.sumsub.com';
+    public const STAGING_BASE_URI = 'https://test-api.cyberity.ru';
 
     /**
      * @var HttpClientInterface
@@ -128,7 +128,7 @@ final class Client implements ClientInterface
      * @throws BadResponseException
      * @throws TransportException
      */
-    public function getApplicantStatusPending(ApplicantStatusPendingRequest $request): ApplicantDataResponse
+    public function getApplicantStatusPending(ApplicantStatusPendingRequest $request): void
     {
         $url = '/resources/applicants/' . $request->getApplicantId() . '/status/pending';
 
@@ -142,8 +142,7 @@ final class Client implements ClientInterface
         if (count($queryParams) > 0) {
             $url .= '?' . http_build_query($queryParams);
         }
-
-        return new ApplicantdataResponse($this->request('POST', $url));
+        $this->request('POST', $url, true);
     }
 
     /**

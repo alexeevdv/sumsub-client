@@ -22,7 +22,7 @@ interface ClientInterface
     /**
      * Get access token for SDKs
      *
-     * @see https://developers.sumsub.com/api-reference/#access-tokens-for-sdks
+     * @see https://developers.cyberity.ru/api-reference/#access-tokens-for-sdks
      * @throws Exception
      */
     public function getAccessToken(AccessTokenRequest $request): AccessTokenResponse;
@@ -30,7 +30,7 @@ interface ClientInterface
     /**
      * Get applicant data
      *
-     * @see https://developers.sumsub.com/api-reference/#getting-applicant-data
+     * @see https://developers.cyberity.ru/api-reference/#getting-applicant-data
      * @throws Exception
      */
     public function getApplicantData(ApplicantDataRequest $request): ApplicantDataResponse;
@@ -38,7 +38,7 @@ interface ClientInterface
     /**
      * Resetting an applicant
      *
-     * @see https://developers.sumsub.com/api-reference/#resetting-an-applicant
+     * @see https://developers.cyberity.ru/api-reference/#resetting-an-applicant
      * @throws Exception
      */
     public function resetApplicant(ApplicantRequest $request): void;
@@ -49,7 +49,7 @@ interface ClientInterface
      * @see https://developers.cyberity.ru/api-reference/#requesting-an-applicant-check
      * @throws Exception
      */
-    public function getApplicantStatusPending(ApplicantStatusPendingRequest $request): ApplicantDataResponse;
+    public function getApplicantStatusPending(ApplicantStatusPendingRequest $request): void;
 
     /**
      * Adding an ID document
@@ -62,7 +62,7 @@ interface ClientInterface
     /**
      * Get applicant status
      *
-     * @see https://developers.sumsub.com/api-reference/#getting-applicant-status-api
+     * @see https://developers.cyberity.ru/api-reference/#getting-applicant-status-api
      * @throws Exception
      */
     public function getApplicantStatus(ApplicantRequest $request): ApplicantDataResponse;
@@ -77,7 +77,7 @@ interface ClientInterface
     /**
      * Get document images
      *
-     * @see https://developers.sumsub.com/api-reference/#getting-document-images
+     * @see https://developers.cyberity.ru/api-reference/#getting-document-images
      * @throws Exception
      */
     public function getDocumentImage(DocumentImageRequest $request): DocumentImageResponse;

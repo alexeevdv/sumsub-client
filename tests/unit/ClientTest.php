@@ -34,7 +34,7 @@ final class ClientTest extends Unit
         $httpClient = $this->makeEmpty(ClientInterface::class, [
             'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
                 self::assertSame('https', $request->getUri()->getScheme());
-                self::assertSame('api.sumsub.com', $request->getUri()->getHost());
+                self::assertSame('api.cyberity.ru', $request->getUri()->getHost());
                 self::assertSame('/resources/accessTokens', $request->getUri()->getPath());
                 self::assertSame('userId=123456&levelName=test-level', $request->getUri()->getQuery());
 
@@ -338,6 +338,28 @@ final class ClientTest extends Unit
         $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
 
         // Act
+        $client->getApplicantStatusPending(new ApplicantStatusPendingRequest('123456', 'someReason', 'wlCheck'));
+    }
+
+    public function testGetApplicantStatusPendingIsNotOk(): void
+    {
+        // Arrange
+        /** @var ClientInterface $httpClient */
+        $httpClient = $this->makeEmpty(ClientInterface::class, [
+            'sendRequest' => Expected::once(static function (RequestInterface $request): ResponseInterface {
+                self::assertSame('/resources/applicants/123456/status/pending', $request->getUri()->getPath());
+                self::assertSame('reason=someReason&reasonCode=wlCheck', $request->getUri()->getQuery());
+
+                return new Response(200, [], json_encode([
+                    'ok' => 0,
+                ]));
+            }),
+        ]);
+
+        $client = new Client($httpClient, $this->getRequestFactory(), $this->getRequestSigner());
+
+        // Act
+        $this->expectException(BadResponseException::class);
         $client->getApplicantStatusPending(new ApplicantStatusPendingRequest('123456', 'someReason', 'wlCheck'));
     }
 
